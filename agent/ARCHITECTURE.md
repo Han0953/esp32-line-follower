@@ -264,7 +264,7 @@ Untuk menghindari kegagalan *socket* pada server HTTP kecil ESP32 dan memungkink
 ### 5.1 Wi-Fi SoftAP Configuration
 
 * **Mode:** `WifiConfiguration::AccessPoint`
-* **SSID:** `Robot-LF-UMRI`
+* **SSID:** `ESP32-Robot-LF`
 * **Password:** `robot1234` (`AuthMethod::WPA2Personal`)
 * **Channel:** `1` (menghindari interferensi kanal tinggi)
 * **Max Connections:** `4` klien simultan

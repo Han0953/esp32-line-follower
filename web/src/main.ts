@@ -1,4 +1,3 @@
-import "./style.css";
 import { hydrateIcons, renderIcon } from "./icons";
 import {
   PID_PRESETS,
@@ -26,6 +25,7 @@ interface UiState {
   selectedPresetId: string;
   pidPopoverOpen: boolean;
   presetDropdownOpen: boolean;
+  guideModalOpen: boolean;
 }
 
 function getElement<T extends HTMLElement>(id: string): T {
@@ -52,6 +52,7 @@ const state: UiState = {
   selectedPresetId: "balanced",
   pidPopoverOpen: false,
   presetDropdownOpen: false,
+  guideModalOpen: false,
 };
 
 hydrateIcons(document);
@@ -66,8 +67,12 @@ const pfBattDot = getElement<HTMLElement>("pf-batt-dot");
 const pfBatteryVal = getElement<HTMLElement>("pf-battery-val");
 const pfSelectedSummary = getElement<HTMLElement>("pf-selected-summary");
 const btnLaunchCockpit = getElement<HTMLButtonElement>("btn-launch-cockpit");
+const btnOpenGuide = getElement<HTMLButtonElement>("btn-open-guide");
+const btnCloseGuide = getElement<HTMLButtonElement>("btn-close-guide");
+const guideModal = getElement<HTMLElement>("guide-modal");
 
 const btnBackPreflight = getElement<HTMLButtonElement>("btn-back-preflight");
+const btnFullscreenHud = getElement<HTMLButtonElement>("btn-fullscreen-hud");
 const hudWsDot = getElement<HTMLElement>("hud-ws-dot");
 const hudWsLabel = getElement<HTMLElement>("hud-ws-label");
 const hudBatteryVal = getElement<HTMLElement>("hud-battery-val");
@@ -160,27 +165,27 @@ const thumbController = new DualThumbController(
 function renderConnectionState(conn: ConnectionState): void {
   if (conn === "CONNECTED") {
     pfWsDot.style.backgroundColor = "var(--accent-online)";
-    pfWsStatus.textContent = "CONNECTED";
+    pfWsStatus.textContent = "Terhubung";
     pfWsStatus.style.color = "var(--accent-online)";
 
     hudWsDot.style.backgroundColor = "var(--accent-online)";
-    hudWsLabel.textContent = "ONLINE";
+    hudWsLabel.textContent = "Terhubung";
     hudWsLabel.style.color = "var(--accent-online)";
   } else if (conn === "CONNECTING") {
     pfWsDot.style.backgroundColor = "var(--accent-amber)";
-    pfWsStatus.textContent = "CONNECTING...";
+    pfWsStatus.textContent = "Menghubungkan...";
     pfWsStatus.style.color = "var(--accent-amber)";
 
     hudWsDot.style.backgroundColor = "var(--accent-amber)";
-    hudWsLabel.textContent = "SYNCING";
+    hudWsLabel.textContent = "Menghubungkan";
     hudWsLabel.style.color = "var(--accent-amber)";
   } else {
     pfWsDot.style.backgroundColor = "var(--accent-danger)";
-    pfWsStatus.textContent = "DISCONNECTED";
+    pfWsStatus.textContent = "Terputus";
     pfWsStatus.style.color = "var(--accent-danger)";
 
     hudWsDot.style.backgroundColor = "var(--accent-danger)";
-    hudWsLabel.textContent = "OFFLINE";
+    hudWsLabel.textContent = "Terputus";
     hudWsLabel.style.color = "var(--accent-danger)";
   }
 }
@@ -194,19 +199,24 @@ function setRobotMode(targetMode: RobotMode, sendToRobot = true): void {
   hudModeButtons.forEach((btn) => {
     const modeAttr = btn.dataset.modeBtn as RobotMode | undefined;
     const isCurrent = modeAttr === targetMode;
-    btn.classList.toggle("is-stop-mode", isCurrent && targetMode === "STOP");
-    btn.classList.toggle("is-active", isCurrent && targetMode !== "STOP");
+    btn.classList.toggle("is-active", isCurrent);
     btn.setAttribute("aria-pressed", String(isCurrent));
   });
+
+  const isStop = targetMode === "STOP";
+  btnEmergencyStop.classList.toggle("is-stop-active", isStop);
+  btnEmergencyStop.setAttribute("aria-pressed", String(isStop));
 
   const isManual = targetMode === "MANUAL";
   padThrottleContainer.classList.toggle("pad-zone-standby", !isManual);
   padSteeringContainer.classList.toggle("pad-zone-standby", !isManual);
 
-  pfBootMode.textContent =
-    targetMode === "STOP"
-      ? "LOCKED // STOP (0% PWM)"
-      : `ACTIVE // ${targetMode} MODE`;
+  const modeLabelMap: Record<RobotMode, string> = {
+    STOP: "Berhenti (STOP)",
+    MANUAL: "Manual",
+    AUTO: "Otomatis",
+  };
+  pfBootMode.textContent = modeLabelMap[targetMode];
 
   renderSensorArray(state.sensors, state.lineError);
 
@@ -225,7 +235,7 @@ function triggerEmergencyStop(): void {
 }
 
 function flashStandbyHint(): void {
-  sensorLineStatus.textContent = "PILIH MODE MANUAL UNTUK KENDALI JEMPOL";
+  sensorLineStatus.textContent = "Pilih mode Manual dulu";
   sensorLineStatus.style.color = "var(--accent-amber)";
   if (standbyHintTimer !== null) {
     window.clearTimeout(standbyHintTimer);
@@ -247,7 +257,7 @@ function renderSensorArray(sensors: SensorTuple, lineError: number): void {
     cell.classList.toggle("is-detected", detected);
   });
 
-  const formattedErr = `${lineError >= 0 ? "+" : ""}${lineError.toFixed(2)}`;
+  const formattedErr = `${lineError > 0 ? "+" : ""}${lineError.toFixed(2)}`;
   telemetryError.textContent = formattedErr;
 
   if (standbyHintTimer !== null) {
@@ -256,16 +266,20 @@ function renderSensorArray(sensors: SensorTuple, lineError: number): void {
 
   if (activeCount === 0) {
     if (state.mode === "AUTO") {
-      sensorLineStatus.textContent = "LINE LOST // SEARCHING";
+      sensorLineStatus.textContent = "Mencari Garis...";
       sensorLineStatus.style.color = "var(--accent-amber)";
       telemetryError.style.color = "var(--accent-amber)";
+    } else if (state.mode === "MANUAL") {
+      sensorLineStatus.textContent = "Mode Manual";
+      sensorLineStatus.style.color = "var(--ink-secondary)";
+      telemetryError.style.color = "var(--ink-primary)";
     } else {
-      sensorLineStatus.textContent = `STANDBY // ${state.mode}`;
+      sensorLineStatus.textContent = "Berhenti";
       sensorLineStatus.style.color = "var(--ink-secondary)";
       telemetryError.style.color = "var(--ink-primary)";
     }
   } else {
-    sensorLineStatus.textContent = `LINE DETECTED (${activeCount}/5 CH)`;
+    sensorLineStatus.textContent = `Garis Terbaca (${activeCount}/5)`;
     sensorLineStatus.style.color = "var(--accent-danger)";
     telemetryError.style.color =
       Math.abs(lineError) >= 1.5 ? "var(--accent-amber)" : "var(--ink-primary)";
@@ -327,15 +341,11 @@ function renderLedState(front: boolean, rear: boolean): void {
 
   btnLedFront.classList.toggle("is-led-on", front);
   btnLedFront.setAttribute("aria-pressed", String(front));
-  dotLedFront.style.backgroundColor = front
-    ? "var(--accent-online)"
-    : "var(--border-hairline)";
+  dotLedFront.style.backgroundColor = front ? "#FAF9F5" : "#B8B5AA";
 
   btnLedRear.classList.toggle("is-led-on", rear);
   btnLedRear.setAttribute("aria-pressed", String(rear));
-  dotLedRear.style.backgroundColor = rear
-    ? "var(--accent-danger)"
-    : "var(--border-hairline)";
+  dotLedRear.style.backgroundColor = rear ? "#FAF9F5" : "#B8B5AA";
 }
 
 function updatePidSummaryBadge(pid: PidParams): void {
@@ -367,6 +377,11 @@ function applyTelemetry(msg: TelemetryMessage): void {
   }
 }
 
+function setGuideModal(open: boolean): void {
+  state.guideModalOpen = open;
+  guideModal.hidden = !open;
+}
+
 function bindPreflightEvents(): void {
   pfModeButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -383,15 +398,36 @@ function bindPreflightEvents(): void {
       });
 
       const summaryMap: Record<RobotMode, string> = {
-        STOP: "STOP (STANDBY)",
-        MANUAL: "MANUAL (DUAL-THUMB)",
-        AUTO: "AUTO (PID 5-CH)",
+        STOP: "STOP (Berhenti)",
+        MANUAL: "Manual (Kontrol HP)",
+        AUTO: "Otomatis (Ikuti Garis)",
       };
       pfSelectedSummary.textContent = summaryMap[mode];
     });
   });
 
+  btnOpenGuide.addEventListener("click", () => {
+    setGuideModal(true);
+  });
+
+  btnCloseGuide.addEventListener("click", () => {
+    setGuideModal(false);
+  });
+
+  guideModal.addEventListener("pointerdown", (e: PointerEvent) => {
+    if (e.target === guideModal) {
+      setGuideModal(false);
+    }
+  });
+
+  window.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.key === "Escape" && state.guideModalOpen) {
+      setGuideModal(false);
+    }
+  });
+
   btnLaunchCockpit.addEventListener("click", () => {
+    setGuideModal(false);
     viewPreflight.classList.add("is-hidden");
     viewCockpit.classList.remove("is-hidden");
     state.currentView = "COCKPIT";
@@ -580,7 +616,7 @@ function bindPidPopoverEvents(): void {
     const kd = Number.parseFloat(inputPidKd.value);
 
     if (!Number.isFinite(kp) || !Number.isFinite(ki) || !Number.isFinite(kd)) {
-      pidFeedbackMsg.textContent = "INPUT INVALID";
+      pidFeedbackMsg.textContent = "Angka tidak valid";
       pidFeedbackMsg.style.color = "var(--accent-danger)";
       return;
     }
@@ -595,7 +631,7 @@ function bindPidPopoverEvents(): void {
     updatePidSummaryBadge(nextPid);
     socket.send({ type: "pid", ...nextPid });
 
-    pidFeedbackMsg.textContent = "TERKIRIM KE ROBOT";
+    pidFeedbackMsg.textContent = "Tersimpan";
     pidFeedbackMsg.style.color = "var(--accent-online)";
     window.setTimeout(() => {
       pidFeedbackMsg.textContent = "";
@@ -623,10 +659,83 @@ function bindPidPopoverEvents(): void {
   });
 }
 
+function bindFullscreenEvents(): void {
+  const root = document.documentElement as HTMLElement & {
+    webkitRequestFullscreen?: () => Promise<void> | void;
+  };
+  const doc = document as Document & {
+    webkitFullscreenElement?: Element | null;
+    webkitExitFullscreen?: () => Promise<void> | void;
+    webkitFullscreenEnabled?: boolean;
+  };
+
+  const supported = Boolean(
+    document.fullscreenEnabled ||
+      doc.webkitFullscreenEnabled ||
+      root.requestFullscreen ||
+      root.webkitRequestFullscreen
+  );
+
+  if (!supported) {
+    btnFullscreenHud.hidden = true;
+    return;
+  }
+
+  const syncFullscreenUi = (): void => {
+    const isFs = Boolean(
+      document.fullscreenElement || doc.webkitFullscreenElement
+    );
+    const iconName = isFs ? "icon-minimize" : "icon-maximize";
+    btnFullscreenHud.setAttribute("aria-pressed", String(isFs));
+    btnFullscreenHud.classList.toggle("is-active", isFs);
+    const slot = btnFullscreenHud.querySelector<HTMLElement>("[data-icon]");
+    if (slot) {
+      const size = Number(slot.dataset.iconSize ?? "14");
+      slot.innerHTML = renderIcon(iconName, size);
+    }
+  };
+
+  const toggleFullscreen = async (): Promise<void> => {
+    const isFs = Boolean(
+      document.fullscreenElement || doc.webkitFullscreenElement
+    );
+    try {
+      if (!isFs) {
+        if (root.requestFullscreen) {
+          await root.requestFullscreen();
+        } else if (root.webkitRequestFullscreen) {
+          await root.webkitRequestFullscreen();
+        }
+        const orientation = screen.orientation as ScreenOrientation & {
+          lock?: (mode: string) => Promise<void>;
+        };
+        if (orientation?.lock) {
+          await orientation.lock("landscape").catch(() => undefined);
+        }
+      } else if (document.exitFullscreen) {
+        await document.exitFullscreen();
+      } else if (doc.webkitExitFullscreen) {
+        await doc.webkitExitFullscreen();
+      }
+    } catch {
+      // Ignore if fullscreen request is rejected by browser.
+    }
+    syncFullscreenUi();
+  };
+
+  btnFullscreenHud.addEventListener("click", () => {
+    void toggleFullscreen();
+  });
+
+  document.addEventListener("fullscreenchange", syncFullscreenUi);
+  document.addEventListener("webkitfullscreenchange", syncFullscreenUi);
+}
+
 bindPreflightEvents();
 bindHudAndUtilityEvents();
 bindPwmSliderEvents();
 bindPidPopoverEvents();
+bindFullscreenEvents();
 setRobotMode("STOP", false);
 setPwmLimit(50, false);
 renderLedState(false, false);

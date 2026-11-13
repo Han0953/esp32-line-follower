@@ -248,7 +248,7 @@ export interface TelemetryMessage {
 ## 7. Non-Functional Requirements
 
 1. **Konkurensi Non-Blocking:** Loop pembacaan sensor dan perhitungan PID harus berjalan pada *thread*/task terpisah dengan prioritas tinggi dan tidak boleh terblokir oleh koneksi HTTP maupun pengiriman paket WebSocket.
-2. **Keamanan Wi-Fi Lokal:** ESP32 beroperasi sebagai Wi-Fi SoftAP (`SSID: Robot-LF-UMRI`, `Password: robot1234`, Channel 1, IP statis `192.168.4.1`).
+2. **Keamanan Wi-Fi Lokal:** ESP32 beroperasi sebagai Wi-Fi SoftAP (`SSID: ESP32-Robot-LF`, `Password: robot1234`, Channel 1, IP statis `192.168.4.1`).
 3. **Ukuran Aset Minimalis:** Bundle hasil akhir `web/dist/index.html.gz` harus di bawah $50\text{ KB}$ agar hemat partisi flash dan termuat dalam waktu $< 200\text{ ms}$ di browser ponsel.
 4. **Ketahanan Error JSON:** Parser JSON di sisi Rust (`serde_json`) harus menangani paket rusak atau tidak lengkap dengan aman tanpa memicu `panic!` pada firmware.
 

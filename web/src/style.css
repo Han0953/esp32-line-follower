@@ -13,8 +13,8 @@
   --ink-primary: #16171A;
   --ink-secondary: #555760;
   --border-hairline: #CECCC3;
-  --border-keycap: #C8C6BC;
-  --border-hover: #B5B3A8;
+  --border-keycap: #B8B5AA;
+  --border-hover: #9E9B90;
   --bevel-highlight: rgba(255, 255, 255, 0.75);
   --accent-danger: #D9381E;
   --accent-danger-edge: #991B1B;
@@ -74,42 +74,30 @@ input:focus-visible,
 .type-start-title {
   font-size: 1.25rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.2;
-}
-
-.type-console-header {
-  font-size: 0.875rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
 }
 
 .type-telemetry-num {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
-  font-size: 1.125rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  letter-spacing: 0;
   line-height: 1.15;
 }
 
 .type-btn-label {
   font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
 }
 
 .type-micro-label {
-  font-size: 0.6875rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--ink-secondary);
 }
 
-/* Level 0: Recessed Track */
+/* Level 0: Recessed Track / Well */
 .surface-recessed {
   background-color: var(--surface-recessed);
   border: 1px solid var(--border-keycap);
@@ -123,15 +111,15 @@ input:focus-visible,
   box-shadow: inset 0 1px 0 var(--bevel-highlight), 0 1px 3px rgba(22, 23, 26, 0.05);
 }
 
-/* Level 1: Tactile Keycap / Button */
+/* Level 1: Tactile Keycap / Button (OFF state = light keycap) */
 .tactile-keycap {
   background-color: var(--surface-elevated);
   color: var(--ink-primary);
   border: 1px solid var(--border-keycap);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
     0 2px 0 var(--border-keycap),
-    0 3px 6px rgba(22, 23, 26, 0.07);
+    0 3px 5px rgba(22, 23, 26, 0.08);
   transition:
     transform 60ms cubic-bezier(0.2, 0, 0, 1),
     background-color 80ms ease,
@@ -141,7 +129,7 @@ input:focus-visible,
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .tactile-keycap:hover:not(:disabled):not(.is-pressed):not(.is-active) {
+  .tactile-keycap:hover:not(:disabled):not(.is-pressed):not(.is-active):not(.is-led-on) {
     background-color: var(--surface-hover);
     border-color: var(--border-hover);
   }
@@ -150,34 +138,62 @@ input:focus-visible,
 .tactile-keycap:active:not(:disabled),
 .tactile-keycap.is-pressed {
   transform: translateY(2px);
-  background-color: var(--surface-recessed);
+  background-color: #DCD9CF;
   box-shadow:
-    inset 0 2px 3px rgba(22, 23, 26, 0.14),
+    inset 0 2px 3px rgba(22, 23, 26, 0.16),
     0 0 0 var(--border-keycap);
 }
 
+/* ON state for Mode / Utility / Action buttons: high-contrast cobalt */
 .tactile-keycap.is-active {
   background-color: var(--accent-active);
   color: var(--surface-elevated);
-  border-color: #17328F;
+  border-color: #152C7A;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.25),
-    0 2px 0 #142B7A;
+    0 2px 0 #112466;
 }
 
+/* ON state for STOP mode button: high-contrast red */
 .tactile-keycap.is-stop-mode {
-  background-color: var(--ink-primary);
+  background-color: var(--accent-danger);
   color: var(--surface-elevated);
-  border-color: var(--ink-primary);
+  border-color: var(--accent-danger-edge);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-    0 2px 0 #2C2E33;
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 2px 0 var(--accent-danger-edge);
 }
 
+/* ON state for Lamp toggles: high-contrast emerald green */
 .tactile-keycap.is-led-on {
-  border-color: var(--accent-online);
-  background-color: #EBF5EE;
-  color: var(--ink-primary);
+  background-color: var(--accent-online);
+  color: var(--surface-elevated);
+  border-color: #0F5C2B;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 2px 0 #0C4A22;
+}
+
+.tactile-keycap.is-active *,
+.tactile-keycap.is-stop-mode *,
+.tactile-keycap.is-led-on * {
+  color: inherit;
+}
+
+/* Modal Backdrop */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background-color: rgba(22, 23, 26, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-backdrop[hidden] {
+  display: none;
 }
 
 /* Dual-Thumb Pad Keycap */
@@ -189,22 +205,26 @@ input:focus-visible,
 
 .thumb-pad-btn.is-pressed {
   transform: translateY(2px);
-  background-color: var(--surface-recessed);
-  border-color: var(--accent-active);
-  color: var(--accent-active);
+  background-color: var(--accent-active);
+  border-color: #152C7A;
+  color: var(--surface-elevated);
   box-shadow:
-    inset 0 2px 4px rgba(22, 23, 26, 0.16),
-    inset 0 0 0 1px var(--accent-active);
+    inset 0 2px 4px rgba(22, 23, 26, 0.25),
+    0 0 0 #152C7A;
+}
+
+.thumb-pad-btn.is-pressed * {
+  color: inherit;
 }
 
 .pad-zone-standby {
-  opacity: 0.65;
+  opacity: 0.6;
 }
 
-/* Emergency STOP Button */
+/* Single STOP Button (Mode STOP + Emergency Stop) */
 .btn-emergency-stop {
-  min-width: 96px;
-  height: 36px;
+  min-width: 88px;
+  height: 34px;
   background-color: var(--accent-danger);
   color: var(--surface-elevated);
   border: 1px solid var(--accent-danger-edge);
@@ -216,6 +236,12 @@ input:focus-visible,
     transform 60ms cubic-bezier(0.2, 0, 0, 1),
     box-shadow 60ms ease,
     background-color 80ms ease;
+}
+
+.btn-emergency-stop.is-stop-active {
+  box-shadow:
+    inset 0 2px 4px rgba(22, 23, 26, 0.3),
+    0 0 0 2px var(--ink-primary);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -268,10 +294,10 @@ input:focus-visible,
 
 /* Sensor Indicator Cell (60ms transition) */
 .sensor-cell {
-  background-color: var(--surface-recessed);
+  background-color: var(--surface-elevated);
   border: 1px solid var(--border-keycap);
   color: var(--ink-secondary);
-  box-shadow: inset 0 2px 4px rgba(22, 23, 26, 0.08);
+  box-shadow: inset 0 1px 2px rgba(22, 23, 26, 0.06);
   transition:
     background-color 60ms ease,
     border-color 60ms ease,

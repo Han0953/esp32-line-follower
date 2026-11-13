@@ -14,7 +14,10 @@ export type IconName =
   | "icon-chevron-down"
   | "icon-rotate-phone"
   | "icon-check"
-  | "icon-shield";
+  | "icon-shield"
+  | "icon-maximize"
+  | "icon-minimize"
+  | "icon-info";
 
 const ICON_PATHS: Record<IconName, string> = {
   "icon-wifi":
@@ -49,6 +52,12 @@ const ICON_PATHS: Record<IconName, string> = {
     '<path d="M20 6 9 17l-5-5"/>',
   "icon-shield":
     '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+  "icon-maximize":
+    '<path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>',
+  "icon-minimize":
+    '<path d="M8 3v3a2 2 0 0 1-2 2H3"/><path d="M21 8h-3a2 2 0 0 1-2-2V3"/><path d="M3 16h3a2 2 0 0 1 2 2v3"/><path d="M16 21v-3a2 2 0 0 1 2-2h3"/>',
+  "icon-info":
+    '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>',
 };
 
 export function renderIcon(name: IconName, size = 16, extraClass = ""): string {

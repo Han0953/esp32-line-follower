@@ -41,20 +41,20 @@ export interface PidPreset {
 export const PID_PRESETS: readonly PidPreset[] = [
   {
     id: "balanced",
-    label: "Standar (Seimbang)",
-    detail: "Kp 35.0 / Ki 0.5 / Kd 14.0",
+    label: "Standar",
+    detail: "Kp 35 / Ki 0.5 / Kd 14",
     params: { kp: 35.0, ki: 0.5, kd: 14.0 },
   },
   {
     id: "precision",
-    label: "Presisi (Tikungan Tajam)",
-    detail: "Kp 48.0 / Ki 0.8 / Kd 22.0",
+    label: "Tikungan Tajam",
+    detail: "Kp 48 / Ki 0.8 / Kd 22",
     params: { kp: 48.0, ki: 0.8, kd: 22.0 },
   },
   {
     id: "highspeed",
-    label: "Kecepatan Tinggi (Lintasan Lurus)",
-    detail: "Kp 26.0 / Ki 0.2 / Kd 18.0",
+    label: "Lintasan Lurus",
+    detail: "Kp 26 / Ki 0.2 / Kd 18",
     params: { kp: 26.0, ki: 0.2, kd: 18.0 },
   },
 ] as const;

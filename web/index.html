@@ -8,7 +8,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="LF Controller" />
     <meta name="theme-color" content="#F3F2EE" />
-    <title>ESP32-2WD // Dual-Mode Line Follower Console</title>
+    <title>Kontrol Robot Line Follower</title>
+    <link rel="stylesheet" href="/src/style.css" />
     <link
       rel="icon"
       type="image/svg+xml"
@@ -16,7 +17,7 @@
     />
     <link
       rel="manifest"
-      href="data:application/manifest+json,%7B%22name%22%3A%22ESP32%20Line%20Follower%22%2C%22short_name%22%3A%22LF%20Robot%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22fullscreen%22%2C%22orientation%22%3A%22landscape%22%2C%22background_color%22%3A%22%23F3F2EE%22%2C%22theme_color%22%3A%22%23F3F2EE%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D'http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg'%2520viewBox%253D'0%25200%252064%252064'%253E%253Crect%2520width%253D'64'%2520height%253D'64'%2520rx%253D'14'%2520fill%253D'%252316171A'%252F%253E%253Ccircle%2520cx%253D'32'%2520cy%253D'32'%2520r%253D'16'%2520fill%253D'none'%2520stroke%252Dwidth%253D'6'%2520stroke%253D'%2523FAF9F5'%252F%253E%253Ccircle%2520cx%253D'32'%2520cy%253D'32'%2520r%253D'5'%2520fill%253D'%2523D9381E'%252F%253E%253C%252Fsvg%253E%22%2C%22sizes%22%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D"
+      href="data:application/manifest+json,%7B%22name%22%3A%22ESP32%20Line%20Follower%22%2C%22short_name%22%3A%22LF%20Robot%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22fullscreen%22%2C%22orientation%22%3A%22landscape%22%2C%22background_color%22%3A%22%23F3F2EE%22%2C%22theme_color%22%3A%22%23F3F2EE%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%2520xmlns%253D'http%253A%252F%252Fwww.w3.org%252F2000%252Fsvg'%2520viewBox%253D'0%25200%252064%252064'%253E%253Crect%2520width%253D'64'%2520height%253D'64'%2520rx%253D'14'%2520fill%253D'%252316171A'%252F%253E%253Ccircle%2520cx%253D'32'%2520cy%253D'32'%2520r%253D'16'%2520fill%253D'none'%2520stroke%252Dwidth%253D'6'%2520stroke%253D'%2523FAF9F5'%252F%253E%253Ccircle%2520cx%253D'32'%2520cy%253D'32'%2520r%253D'5'%2520fill%253D'%2523D9381E'%252F%253E%253C%252Fsvg%253E%22%2C%22sizes%2522%3A%22any%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D"
     />
   </head>
   <body>
@@ -26,188 +27,220 @@
       aria-live="polite"
       class="flex-col items-center justify-center p-6 text-center"
     >
-      <div class="surface-panel max-w-sm rounded-xl p-6 flex flex-col items-center gap-4">
+      <div class="surface-panel max-w-sm rounded-xl p-6 flex flex-col items-center gap-3">
         <div
           class="surface-recessed w-14 h-14 rounded-lg flex items-center justify-center text-[#1E40AF]"
           data-icon="icon-rotate-phone"
           data-icon-size="28"
         ></div>
-        <div class="type-micro-label">ORIENTATION LOCK // LANDSCAPE REQUIRED</div>
-        <h2 class="type-start-title m-0">
-          Putar Perangkat ke Mode Landscape untuk Membuka Konsol Kendali
-        </h2>
+        <h2 class="type-start-title m-0">Putar HP ke Landscape</h2>
         <p class="text-xs text-[#555760] m-0 leading-relaxed">
-          Instrumen kendali dua jempol (Throttle &amp; Steering) dan telemetri 5-kanal dirancang khusus untuk orientasi mendatar penuh.
+          Kontrol robot hanya bisa dipakai dalam posisi layar mendatar.
         </p>
       </div>
     </aside>
 
-    <!-- View 1: Pre-Flight Gate (Landscape) -->
-    <section id="view-preflight" class="view-screen preflight-grid" aria-label="Pre-Flight System Gate">
-      <!-- Left Column: System Identity & Readiness -->
+    <!-- View 1: Halaman Awal (Landscape) -->
+    <section id="view-preflight" class="view-screen preflight-grid" aria-label="Halaman Awal">
+      <!-- Kolom Kiri: Info & Status Robot -->
       <div class="surface-panel rounded-xl p-4 flex flex-col justify-between min-h-0">
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-1.5">
           <div class="flex items-center justify-between gap-2">
-            <span class="surface-recessed px-2.5 py-1 rounded text-[11px] font-semibold tracking-wider uppercase text-[#16171A]">
-              ESP32-2WD // DUAL-MODE CONTROLLER
+            <span class="surface-recessed px-2.5 py-1 rounded text-xs font-semibold text-[#16171A]">
+              ESP32 Line Follower
             </span>
-            <span class="type-micro-label tabular-nums">AP 192.168.4.1</span>
+            <span class="type-micro-label tabular-nums">192.168.4.1</span>
           </div>
-          <h1 class="type-start-title m-0 mt-1">
-            KONSOL KENDALI LINE FOLLOWER &amp; TELEMETRI
-          </h1>
+          <h1 class="type-start-title m-0 mt-1">Dashboard Kontrol Robot</h1>
           <p class="text-xs text-[#555760] m-0 leading-relaxed">
-            Unit kendali taktil waktu nyata untuk navigasi garis otomatis (PID 5-Kanal 100 Hz) dan kendali manual diferensial dua jempol via WebSocket.
+            Panel untuk menggerakkan robot secara manual lewat layar HP atau menjalankan mode ikuti garis otomatis. Pastikan perangkat sudah terhubung ke Wi-Fi <strong>ESP32-Robot-LF</strong>.
           </p>
         </div>
 
-        <!-- Hardware Readiness Recessed Box -->
+        <!-- Kotak Status -->
         <div class="surface-recessed rounded-lg p-3 flex flex-col gap-2">
-          <div class="type-micro-label">STATUS KESIAPAN PERANGKAT KERAS</div>
+          <div class="type-micro-label">Status Sistem</div>
 
-          <!-- Row 1: WebSocket Link -->
+          <!-- Baris 1: Koneksi WebSocket -->
           <div class="surface-panel rounded px-3 py-2 flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-              <span
-                id="pf-ws-dot"
-                class="w-2.5 h-2.5 rounded-full bg-[#D9381E]"
-              ></span>
+            <div class="flex items-center gap-2">
+              <span id="pf-ws-dot" class="w-2.5 h-2.5 rounded-full bg-[#D9381E]"></span>
               <span data-icon="icon-wifi" data-icon-size="15"></span>
-              <span class="text-xs font-semibold">WebSocket Link (192.168.4.1/ws)</span>
+              <span class="text-xs font-semibold">Koneksi Robot</span>
             </div>
-            <span
-              id="pf-ws-status"
-              class="tabular-nums text-xs font-bold text-[#D9381E]"
-            >
-              CONNECTING...
+            <span id="pf-ws-status" class="tabular-nums text-xs font-bold text-[#D9381E]">
+              Menghubungkan...
             </span>
           </div>
 
-          <!-- Row 2: Safety Boot State -->
+          <!-- Baris 2: Mode Saat Ini -->
           <div class="surface-panel rounded px-3 py-2 flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-2">
               <span class="w-2.5 h-2.5 rounded-full bg-[#15803D]"></span>
               <span data-icon="icon-shield" data-icon-size="15"></span>
-              <span class="text-xs font-semibold">Safety Boot Interlock</span>
+              <span class="text-xs font-semibold">Status Awal</span>
             </div>
-            <span
-              id="pf-boot-mode"
-              class="tabular-nums text-xs font-bold text-[#16171A]"
-            >
-              LOCKED // STOP (0% PWM)
+            <span id="pf-boot-mode" class="tabular-nums text-xs font-bold text-[#16171A]">
+              Berhenti (STOP)
             </span>
           </div>
 
-          <!-- Row 3: Power Telemetry -->
+          <!-- Baris 3: Tegangan Baterai -->
           <div class="surface-panel rounded px-3 py-2 flex items-center justify-between">
-            <div class="flex items-center gap-2.5">
-              <span
-                id="pf-batt-dot"
-                class="w-2.5 h-2.5 rounded-full bg-[#555760]"
-              ></span>
+            <div class="flex items-center gap-2">
+              <span id="pf-batt-dot" class="w-2.5 h-2.5 rounded-full bg-[#555760]"></span>
               <span data-icon="icon-battery" data-icon-size="15"></span>
-              <span class="text-xs font-semibold">Power Rail Telemetry (2S 18650)</span>
+              <span class="text-xs font-semibold">Baterai</span>
             </div>
-            <span
-              id="pf-battery-val"
-              class="tabular-nums text-xs font-bold text-[#16171A]"
-            >
+            <span id="pf-battery-val" class="tabular-nums text-xs font-bold text-[#16171A]">
               --.- V
             </span>
           </div>
         </div>
       </div>
 
-      <!-- Right Column: Action Launch Deck -->
+      <!-- Kolom Kanan: Pilihan Mode Awal, Tombol Panduan & Masuk -->
       <div class="surface-panel rounded-xl p-4 flex flex-col justify-between min-h-0">
         <div class="flex flex-col gap-3">
-          <div class="flex items-center justify-between">
-            <span class="type-micro-label">PRE-FLIGHT MODE SELECTION</span>
-            <span class="type-micro-label tabular-nums">WATCHDOG 400 MS</span>
+          <div class="flex items-center justify-between gap-2">
+            <span class="type-micro-label">Pilih Mode Awal</span>
+            <button
+              id="btn-open-guide"
+              type="button"
+              class="tactile-keycap rounded-md px-2.5 py-1 flex items-center gap-1.5 text-xs font-semibold"
+            >
+              <span data-icon="icon-info" data-icon-size="14"></span>
+              <span>Panduan Singkat</span>
+            </button>
           </div>
 
-          <p class="text-xs text-[#555760] m-0">
-            Pilih profil operasi awal sebelum membuka kokpit kendali. Setiap perpindahan mode melewati interlock STOP aman.
-          </p>
-
-          <!-- Segmented Switch for Initial Mode -->
+          <!-- 3 Tombol Mode Awal -->
           <div
-            class="surface-recessed rounded-lg p-1.5 grid grid-cols-3 gap-1.5"
+            class="surface-recessed rounded-lg p-1.5 grid grid-cols-3 gap-2"
             role="group"
             aria-label="Pilihan Mode Awal"
           >
             <button
               type="button"
               data-pf-mode="STOP"
-              class="tactile-keycap is-stop-mode rounded-md py-2.5 px-2 flex flex-col items-center gap-1"
+              class="tactile-keycap is-stop-mode rounded-md py-3 px-2 flex flex-col items-center gap-1"
             >
-              <span data-icon="icon-stop" data-icon-size="16"></span>
+              <span data-icon="icon-stop" data-icon-size="18"></span>
               <span class="type-btn-label">STOP</span>
-              <span class="text-[10px] opacity-80">Standby Aman</span>
+              <span class="text-[11px] opacity-90">Berhenti</span>
             </button>
             <button
               type="button"
               data-pf-mode="MANUAL"
-              class="tactile-keycap rounded-md py-2.5 px-2 flex flex-col items-center gap-1"
+              class="tactile-keycap rounded-md py-3 px-2 flex flex-col items-center gap-1"
             >
-              <span data-icon="icon-manual" data-icon-size="16"></span>
-              <span class="type-btn-label">MANUAL</span>
-              <span class="text-[10px] text-[#555760]">Dual-Thumb</span>
+              <span data-icon="icon-manual" data-icon-size="18"></span>
+              <span class="type-btn-label">Manual</span>
+              <span class="text-[11px] text-[#555760]">Kontrol HP</span>
             </button>
             <button
               type="button"
               data-pf-mode="AUTO"
-              class="tactile-keycap rounded-md py-2.5 px-2 flex flex-col items-center gap-1"
+              class="tactile-keycap rounded-md py-3 px-2 flex flex-col items-center gap-1"
             >
-              <span data-icon="icon-auto" data-icon-size="16"></span>
-              <span class="type-btn-label">AUTO</span>
-              <span class="text-[10px] text-[#555760]">PID 5-Sensor</span>
+              <span data-icon="icon-auto" data-icon-size="18"></span>
+              <span class="type-btn-label">Otomatis</span>
+              <span class="text-[11px] text-[#555760]">Ikuti Garis</span>
             </button>
           </div>
 
-          <!-- Selected Mode Summary -->
-          <div class="surface-recessed rounded-lg p-2.5 flex items-center justify-between">
-            <span class="type-micro-label">TARGET MODE SAAT MASUK</span>
+          <div class="surface-recessed rounded-lg px-3 py-2 flex items-center justify-between">
+            <span class="type-micro-label">Mode Dipilih</span>
             <span id="pf-selected-summary" class="tabular-nums text-xs font-bold text-[#16171A]">
-              STOP (STANDBY)
+              STOP (Berhenti)
             </span>
           </div>
         </div>
 
-        <!-- Hardware Launch Switch -->
         <button
           id="btn-launch-cockpit"
           type="button"
           class="tactile-keycap is-active w-full rounded-lg py-3.5 px-4 flex items-center justify-between"
         >
-          <span class="type-btn-label tracking-wider">MASUK KE DASHBOARD KONTROL</span>
+          <span class="type-btn-label">Buka Kontrol</span>
           <span data-icon="icon-arrow-right" data-icon-size="18"></span>
         </button>
       </div>
     </section>
 
-    <!-- View 2: Main Control Cockpit (Landscape) -->
-    <main id="view-cockpit" class="view-screen is-hidden cockpit-shell" aria-label="Control Cockpit">
-      <!-- Top HUD Bar (48px, 3 Sections) -->
+    <!-- Pop-up Modal Panduan Singkat -->
+    <div
+      id="guide-modal"
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="guide-modal-title"
+      class="modal-backdrop"
+    >
+      <div class="surface-popover w-full max-w-md rounded-xl p-4 flex flex-col gap-3">
+        <div class="flex items-center justify-between border-b border-[#CECCC3] pb-2">
+          <h2 id="guide-modal-title" class="text-sm font-bold m-0 text-[#16171A]">
+            Panduan Singkat Penggunaan
+          </h2>
+          <button
+            id="btn-close-guide"
+            type="button"
+            class="tactile-keycap rounded px-2.5 py-1 text-xs font-semibold"
+          >
+            Tutup
+          </button>
+        </div>
+
+        <div class="surface-recessed rounded-lg p-3 flex flex-col gap-2.5 text-xs text-[#16171A]">
+          <div class="flex items-start gap-2.5">
+            <span data-icon="icon-manual" data-icon-size="16" class="text-[#1E40AF] shrink-0 mt-0.5"></span>
+            <div>
+              <strong>Mode Manual:</strong> Gunakan jempol kiri untuk maju/mundur dan jempol kanan untuk belok kiri/kanan. Saat tombol dilepas, robot otomatis berhenti.
+            </div>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span data-icon="icon-auto" data-icon-size="16" class="text-[#1E40AF] shrink-0 mt-0.5"></span>
+            <div>
+              <strong>Mode Otomatis:</strong> Robot berjalan mengikuti jalur garis hitam memakai 5 sensor di bagian bawah.
+            </div>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span data-icon="icon-sliders" data-icon-size="16" class="text-[#16171A] shrink-0 mt-0.5"></span>
+            <div>
+              <strong>Kecepatan &amp; PID:</strong> Geser slider untuk membatasi kecepatan motor, dan buka menu <strong>Atur PID</strong> jika gerakan belok di mode otomatis kurang halus.
+            </div>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <span data-icon="icon-stop" data-icon-size="16" class="text-[#D9381E] shrink-0 mt-0.5"></span>
+            <div>
+              <strong>Tombol STOP:</strong> Tekan kapan saja untuk langsung mematikan kedua motor.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View 2: Dashboard Kontrol Utama (Landscape) -->
+    <main id="view-cockpit" class="view-screen is-hidden cockpit-shell" aria-label="Dashboard Kontrol">
+      <!-- Top HUD Bar -->
       <header class="surface-panel rounded-lg hud-bar-grid">
-        <!-- Left HUD: WS Status + Battery + Pre-Flight Back Button -->
+        <!-- Kiri: Kembali, Status Koneksi, Baterai -->
         <div class="flex items-center gap-2 min-w-0">
           <button
             id="btn-back-preflight"
             type="button"
-            class="tactile-keycap rounded px-2 h-8 flex items-center gap-1 text-xs font-semibold shrink-0"
-            aria-label="Kembali ke layar Pre-Flight"
-            title="Layar Pre-Flight"
+            class="tactile-keycap rounded px-2.5 h-8 flex items-center gap-1 text-xs font-semibold shrink-0"
+            aria-label="Kembali ke halaman awal"
           >
             <span data-icon="icon-arrow-left" data-icon-size="14"></span>
-            <span class="hidden sm:inline type-micro-label text-[#16171A]">GATE</span>
+            <span class="hidden sm:inline text-xs font-semibold">Kembali</span>
           </button>
 
-          <div class="surface-recessed rounded px-2.5 h-8 flex items-center gap-2 shrink-0">
+          <div class="surface-recessed rounded px-2.5 h-8 flex items-center gap-1.5 shrink-0">
             <span id="hud-ws-dot" class="w-2 h-2 rounded-full bg-[#D9381E]"></span>
             <span data-icon="icon-wifi" data-icon-size="14"></span>
-            <span id="hud-ws-label" class="tabular-nums text-[11px] font-bold text-[#D9381E]">
-              OFFLINE
+            <span id="hud-ws-label" class="tabular-nums text-xs font-bold text-[#D9381E]">
+              Terputus
             </span>
           </div>
 
@@ -219,176 +252,171 @@
           </div>
         </div>
 
-        <!-- Center HUD: Segmented Mode Switch [STOP | AUTO | MANUAL] -->
+        <!-- Tengah: Pilihan Mode [Manual | Otomatis] -->
         <nav
           class="surface-recessed rounded-md p-1 flex items-center gap-1"
-          aria-label="Mode Operasi Robot"
+          aria-label="Mode Robot"
         >
           <button
             type="button"
-            data-mode-btn="STOP"
-            class="tactile-keycap is-stop-mode rounded px-3 h-7 flex items-center gap-1.5"
+            data-mode-btn="MANUAL"
+            aria-pressed="false"
+            class="tactile-keycap rounded px-3 h-7 flex items-center gap-1.5"
           >
-            <span data-icon="icon-stop" data-icon-size="13"></span>
-            <span class="type-btn-label">STOP</span>
+            <span data-icon="icon-manual" data-icon-size="14"></span>
+            <span class="type-btn-label">Manual</span>
           </button>
           <button
             type="button"
             data-mode-btn="AUTO"
+            aria-pressed="false"
             class="tactile-keycap rounded px-3 h-7 flex items-center gap-1.5"
           >
-            <span data-icon="icon-auto" data-icon-size="13"></span>
-            <span class="type-btn-label">AUTO</span>
-          </button>
-          <button
-            type="button"
-            data-mode-btn="MANUAL"
-            class="tactile-keycap rounded px-3 h-7 flex items-center gap-1.5"
-          >
-            <span data-icon="icon-manual" data-icon-size="13"></span>
-            <span class="type-btn-label">MANUAL</span>
+            <span data-icon="icon-auto" data-icon-size="14"></span>
+            <span class="type-btn-label">Otomatis</span>
           </button>
         </nav>
 
-        <!-- Right HUD: Robot Title & Emergency STOP Button -->
-        <div class="flex items-center justify-end gap-2.5 min-w-0">
-          <span class="type-console-header hidden md:inline text-[#555760] truncate">
-            ROBOT-LF // 2WD
-          </span>
+        <!-- Kanan: 1 Tombol Layar Penuh & 1 Tombol STOP -->
+        <div class="flex items-center justify-end gap-2 min-w-0">
+          <button
+            id="btn-fullscreen-hud"
+            type="button"
+            aria-pressed="false"
+            aria-label="Layar Penuh"
+            title="Layar Penuh"
+            class="tactile-keycap rounded px-2.5 h-8 flex items-center gap-1.5 shrink-0"
+          >
+            <span data-icon="icon-maximize" data-icon-size="14"></span>
+            <span class="hidden md:inline text-xs font-semibold">Layar Penuh</span>
+          </button>
           <button
             id="btn-emergency-stop"
             type="button"
-            class="btn-emergency-stop rounded-md px-3 flex items-center justify-center gap-1.5 shrink-0"
+            aria-pressed="true"
+            class="btn-emergency-stop is-stop-active rounded-md px-3 flex items-center justify-center gap-1.5 shrink-0"
           >
             <span data-icon="icon-stop" data-icon-size="15"></span>
-            <span class="type-btn-label tracking-wider">STOP</span>
+            <span class="type-btn-label">STOP</span>
           </button>
         </div>
       </header>
 
-      <!-- 3-Column Cockpit Body (27% Left | 46% Center | 27% Right) -->
+      <!-- 3 Kolom Utama (27% Kiri | 46% Tengah | 27% Kanan) -->
       <div class="cockpit-main-grid">
-        <!-- LEFT ZONE (27%): Throttle Control (Forward / Reverse) -->
+        <!-- ZONA KIRI (27%): Maju / Mundur -->
         <section
           id="zone-throttle"
-          class="surface-panel rounded-lg p-2.5 flex flex-col justify-between gap-2 min-h-0"
-          aria-label="Zona Kontrol Throttle"
+          class="surface-panel rounded-lg p-2 flex flex-col justify-between gap-2 min-h-0"
+          aria-label="Kontrol Maju Mundur"
         >
           <div class="flex items-center justify-between px-1">
-            <span class="type-micro-label">THROTTLE // LEFT THUMB</span>
-            <span
-              id="readout-throttle"
-              class="tabular-nums text-xs font-bold text-[#16171A]"
-            >
+            <span class="type-micro-label">Maju / Mundur</span>
+            <span id="readout-throttle" class="tabular-nums text-xs font-bold text-[#16171A]">
               0%
             </span>
           </div>
 
           <div
             id="pad-throttle-container"
-            class="pad-zone-standby flex-1 flex flex-col justify-between gap-2 min-h-0"
+            class="surface-recessed pad-zone-standby rounded-lg p-1.5 flex-1 flex flex-col justify-between gap-2 min-h-0"
           >
             <button
               id="btn-throttle-forward"
               type="button"
               aria-pressed="false"
-              class="tactile-keycap thumb-pad-btn flex-1 rounded-lg flex flex-col items-center justify-center gap-1.5"
+              class="tactile-keycap thumb-pad-btn flex-1 rounded-md flex flex-col items-center justify-center gap-1"
             >
               <span data-icon="icon-arrow-up" data-icon-size="24"></span>
-              <span class="type-btn-label">MAJU</span>
-              <span class="tabular-nums text-[11px] text-[#555760]">+100</span>
+              <span class="type-btn-label">Maju</span>
             </button>
 
             <button
               id="btn-throttle-reverse"
               type="button"
               aria-pressed="false"
-              class="tactile-keycap thumb-pad-btn flex-1 rounded-lg flex flex-col items-center justify-center gap-1.5"
+              class="tactile-keycap thumb-pad-btn flex-1 rounded-md flex flex-col items-center justify-center gap-1"
             >
               <span data-icon="icon-arrow-down" data-icon-size="24"></span>
-              <span class="type-btn-label">MUNDUR</span>
-              <span class="tabular-nums text-[11px] text-[#555760]">-100</span>
+              <span class="type-btn-label">Mundur</span>
             </button>
           </div>
         </section>
 
-        <!-- CENTER ZONE (46%): 3 Stacked Modules (Sensors, PWM Slider, Utilities & PID) -->
+        <!-- ZONA TENGAH (46%): Sensor, Kecepatan, Lampu & PID -->
         <section
           class="flex flex-col justify-between gap-2 min-h-0 relative"
-          aria-label="Panel Instrumen Telemetri dan Kalibrasi"
+          aria-label="Panel Sensor dan Pengaturan"
         >
-          <!-- Module 1: 5-Channel Line Sensor Visualizer & Drive Telemetry -->
+          <!-- Modul 1: 5 Sensor Garis -->
           <div class="surface-panel rounded-lg p-2.5 flex-1 flex flex-col justify-between gap-2 min-h-0">
             <div class="flex items-center justify-between">
-              <span class="type-micro-label">SENSOR ARRAY // TCRT5000 5-CH</span>
-              <span
-                id="sensor-line-status"
-                class="tabular-nums text-[11px] font-bold text-[#555760]"
-              >
-                STANDBY
+              <span class="type-micro-label">Sensor Garis (S1 - S5)</span>
+              <span id="sensor-line-status" class="tabular-nums text-xs font-bold text-[#555760]">
+                Berhenti
               </span>
             </div>
 
-            <!-- 5 Sensor Indicators (S1..S5) -->
-            <div class="grid grid-cols-5 gap-2 flex-1 min-h-[46px]">
+            <!-- 5 Indikator Sensor -->
+            <div class="surface-recessed rounded-lg p-1.5 grid grid-cols-5 gap-1.5 flex-1 min-h-[44px]">
               <div
                 data-sensor-idx="0"
-                class="sensor-cell rounded-md p-1.5 flex flex-col items-center justify-between"
+                class="sensor-cell rounded p-1 flex flex-col items-center justify-between"
               >
-                <span class="type-micro-label text-current">S1</span>
-                <span class="w-2.5 h-2.5 rounded-full bg-current opacity-40"></span>
-                <span class="tabular-nums text-[10px] font-semibold">-2.0</span>
+                <span class="text-[11px] font-bold">S1</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-current opacity-50"></span>
+                <span class="tabular-nums text-[10px]">-2</span>
               </div>
               <div
                 data-sensor-idx="1"
-                class="sensor-cell rounded-md p-1.5 flex flex-col items-center justify-between"
+                class="sensor-cell rounded p-1 flex flex-col items-center justify-between"
               >
-                <span class="type-micro-label text-current">S2</span>
-                <span class="w-2.5 h-2.5 rounded-full bg-current opacity-40"></span>
-                <span class="tabular-nums text-[10px] font-semibold">-1.0</span>
+                <span class="text-[11px] font-bold">S2</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-current opacity-50"></span>
+                <span class="tabular-nums text-[10px]">-1</span>
               </div>
               <div
                 data-sensor-idx="2"
-                class="sensor-cell rounded-md p-1.5 flex flex-col items-center justify-between"
+                class="sensor-cell rounded p-1 flex flex-col items-center justify-between"
               >
-                <span class="type-micro-label text-current">S3</span>
-                <span class="w-2.5 h-2.5 rounded-full bg-current opacity-40"></span>
-                <span class="tabular-nums text-[10px] font-semibold">0.0</span>
+                <span class="text-[11px] font-bold">S3</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-current opacity-50"></span>
+                <span class="tabular-nums text-[10px]">0</span>
               </div>
               <div
                 data-sensor-idx="3"
-                class="sensor-cell rounded-md p-1.5 flex flex-col items-center justify-between"
+                class="sensor-cell rounded p-1 flex flex-col items-center justify-between"
               >
-                <span class="type-micro-label text-current">S4</span>
-                <span class="w-2.5 h-2.5 rounded-full bg-current opacity-40"></span>
-                <span class="tabular-nums text-[10px] font-semibold">+1.0</span>
+                <span class="text-[11px] font-bold">S4</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-current opacity-50"></span>
+                <span class="tabular-nums text-[10px]">+1</span>
               </div>
               <div
                 data-sensor-idx="4"
-                class="sensor-cell rounded-md p-1.5 flex flex-col items-center justify-between"
+                class="sensor-cell rounded p-1 flex flex-col items-center justify-between"
               >
-                <span class="type-micro-label text-current">S5</span>
-                <span class="w-2.5 h-2.5 rounded-full bg-current opacity-40"></span>
-                <span class="tabular-nums text-[10px] font-semibold">+2.0</span>
+                <span class="text-[11px] font-bold">S5</span>
+                <span class="w-2.5 h-2.5 rounded-full bg-current opacity-50"></span>
+                <span class="tabular-nums text-[10px]">+2</span>
               </div>
             </div>
 
-            <!-- Numeric Readout Strip: Error & Left/Right Motor Output -->
+            <!-- Info Posisi & Motor -->
             <div class="surface-recessed rounded px-2.5 py-1.5 grid grid-cols-3 gap-2">
               <div class="flex flex-col">
-                <span class="type-micro-label">LINE ERROR</span>
+                <span class="type-micro-label">Error Garis</span>
                 <span id="telemetry-error" class="type-telemetry-num text-[#16171A]">
-                  +0.00
+                  0.00
                 </span>
               </div>
               <div class="flex flex-col border-l border-[#CECCC3] pl-2">
-                <span class="type-micro-label">MOTOR L</span>
+                <span class="type-micro-label">Motor Kiri</span>
                 <span id="telemetry-motor-l" class="type-telemetry-num text-[#16171A]">
                   0%
                 </span>
               </div>
               <div class="flex flex-col border-l border-[#CECCC3] pl-2">
-                <span class="type-micro-label">MOTOR R</span>
+                <span class="type-micro-label">Motor Kanan</span>
                 <span id="telemetry-motor-r" class="type-telemetry-num text-[#16171A]">
                   0%
                 </span>
@@ -396,16 +424,11 @@
             </div>
           </div>
 
-          <!-- Module 2: Custom Tactile PWM Speed Limit Slider (0% - 100%) -->
-          <div class="surface-panel rounded-lg p-2.5 flex flex-col gap-2">
+          <!-- Modul 2: Slider Batas Kecepatan PWM -->
+          <div class="surface-panel rounded-lg p-2.5 flex flex-col gap-1.5">
             <div class="flex items-center justify-between">
-              <span id="pwm-slider-label" class="type-micro-label">
-                BATAS SPEED PWM // MAX OUTPUT
-              </span>
-              <span
-                id="pwm-limit-readout"
-                class="type-telemetry-num text-[#1E40AF]"
-              >
+              <span id="pwm-slider-label" class="type-micro-label">Batas Kecepatan</span>
+              <span id="pwm-limit-readout" class="type-telemetry-num text-[#1E40AF]">
                 50%
               </span>
             </div>
@@ -438,47 +461,43 @@
             </div>
           </div>
 
-          <!-- Module 3: LED Switches & PID Tuning Popover Trigger -->
-          <div class="surface-panel rounded-lg p-1.5 grid grid-cols-3 gap-1.5 items-stretch">
-            <!-- Front White LED Toggle -->
+          <!-- Modul 3: Sakelar Lampu & Tombol PID (Di dalam wadah recessed agar kontras) -->
+          <div class="surface-recessed rounded-lg p-1.5 grid grid-cols-3 gap-1.5 items-stretch">
+            <!-- Lampu Depan -->
             <button
               id="btn-led-front"
               type="button"
               aria-pressed="false"
               class="tactile-keycap rounded-md py-1.5 px-2 flex items-center justify-between gap-1"
             >
-              <div class="flex items-center gap-1 min-w-0">
+              <div class="flex items-center gap-1.5 min-w-0">
                 <span data-icon="icon-headlight" data-icon-size="14" class="shrink-0"></span>
-                <span class="text-[11px] font-semibold uppercase tracking-tight whitespace-nowrap">
-                  LED DEPAN
-                </span>
+                <span class="text-xs font-semibold truncate">Lampu Depan</span>
               </div>
               <span
                 id="dot-led-front"
-                class="w-2 h-2 rounded-full bg-[#CECCC3] shrink-0"
+                class="w-2 h-2 rounded-full bg-[#B8B5AA] shrink-0"
               ></span>
             </button>
 
-            <!-- Rear Red LED Toggle -->
+            <!-- Lampu Belakang -->
             <button
               id="btn-led-rear"
               type="button"
               aria-pressed="false"
               class="tactile-keycap rounded-md py-1.5 px-2 flex items-center justify-between gap-1"
             >
-              <div class="flex items-center gap-1 min-w-0">
+              <div class="flex items-center gap-1.5 min-w-0">
                 <span data-icon="icon-taillight" data-icon-size="14" class="shrink-0"></span>
-                <span class="text-[11px] font-semibold uppercase tracking-tight whitespace-nowrap">
-                  LED BELAKANG
-                </span>
+                <span class="text-xs font-semibold truncate">Lampu Belakang</span>
               </div>
               <span
                 id="dot-led-rear"
-                class="w-2 h-2 rounded-full bg-[#CECCC3] shrink-0"
+                class="w-2 h-2 rounded-full bg-[#B8B5AA] shrink-0"
               ></span>
             </button>
 
-            <!-- PID Tuning Popover Trigger -->
+            <!-- Tombol Pengaturan PID -->
             <button
               id="btn-pid-toggle"
               type="button"
@@ -486,12 +505,10 @@
               aria-controls="pid-popover"
               class="tactile-keycap rounded-md py-1.5 px-2 flex items-center justify-between gap-1"
             >
-              <div class="flex items-center gap-1 min-w-0">
+              <div class="flex items-center gap-1.5 min-w-0">
                 <span data-icon="icon-sliders" data-icon-size="14" class="shrink-0"></span>
                 <div class="flex flex-col items-start min-w-0">
-                  <span class="text-[11px] font-semibold uppercase tracking-tight leading-none whitespace-nowrap">
-                    PID TUNING
-                  </span>
+                  <span class="text-xs font-semibold leading-none">Atur PID</span>
                   <span
                     id="pid-summary-badge"
                     class="tabular-nums text-[10px] text-[#555760] truncate"
@@ -509,27 +526,25 @@
             </button>
           </div>
 
-          <!-- Level 2: Floating Popover for PID Tuning (Anchored Inside Center Column) -->
+          <!-- Popover Pengaturan PID -->
           <div
             id="pid-popover"
             hidden
             role="dialog"
-            aria-label="Panel Kalibrasi Konstanta PID"
-            class="surface-popover absolute left-0 right-0 bottom-[54px] z-30 rounded-xl p-3 flex flex-col gap-2.5"
+            aria-label="Pengaturan PID"
+            class="surface-popover absolute left-0 right-0 bottom-[52px] z-30 rounded-xl p-3 flex flex-col gap-2.5"
           >
             <div class="flex items-center justify-between border-b border-[#CECCC3] pb-1.5">
-              <span class="type-micro-label text-[#16171A]">
-                KALIBRASI DISCRETE PID // 100 HZ
-              </span>
+              <span class="text-xs font-bold text-[#16171A]">Pengaturan PID</span>
               <span
                 id="pid-feedback-msg"
-                class="tabular-nums text-[11px] font-semibold text-[#15803D]"
+                class="tabular-nums text-xs font-semibold text-[#15803D]"
               ></span>
             </div>
 
-            <!-- Custom Preset Dropdown -->
+            <!-- Pilihan Preset -->
             <div class="relative flex flex-col gap-1">
-              <span class="type-micro-label">PRESET KARAKTER LINTASAN</span>
+              <span class="type-micro-label">Preset</span>
               <button
                 id="btn-preset-select"
                 type="button"
@@ -538,7 +553,7 @@
                 class="tactile-keycap rounded-md px-2.5 py-1.5 flex items-center justify-between text-left"
               >
                 <span id="preset-current-label" class="text-xs font-semibold">
-                  Standar (Seimbang)
+                  Standar
                 </span>
                 <span
                   id="preset-chevron"
@@ -548,7 +563,6 @@
                 ></span>
               </button>
 
-              <!-- Custom Preset Listbox Menu -->
               <div
                 id="preset-menu-list"
                 hidden
@@ -558,10 +572,10 @@
               ></div>
             </div>
 
-            <!-- 3 Numeric Inputs: Kp, Ki, Kd -->
+            <!-- Input Kp, Ki, Kd -->
             <div class="grid grid-cols-3 gap-2">
               <label class="flex flex-col gap-1">
-                <span class="type-micro-label">PROPORTIONAL (KP)</span>
+                <span class="type-micro-label">Kp</span>
                 <input
                   id="input-pid-kp"
                   type="number"
@@ -573,7 +587,7 @@
                 />
               </label>
               <label class="flex flex-col gap-1">
-                <span class="type-micro-label">INTEGRAL (KI)</span>
+                <span class="type-micro-label">Ki</span>
                 <input
                   id="input-pid-ki"
                   type="number"
@@ -585,7 +599,7 @@
                 />
               </label>
               <label class="flex flex-col gap-1">
-                <span class="type-micro-label">DERIVATIVE (KD)</span>
+                <span class="type-micro-label">Kd</span>
                 <input
                   id="input-pid-kd"
                   type="number"
@@ -598,66 +612,60 @@
               </label>
             </div>
 
-            <!-- Apply & Close Row -->
             <div class="flex items-center justify-end gap-2 pt-1">
               <button
                 id="btn-pid-close"
                 type="button"
                 class="tactile-keycap rounded px-3 py-1.5 type-btn-label"
               >
-                TUTUP
+                Tutup
               </button>
               <button
                 id="btn-pid-apply"
                 type="button"
                 class="tactile-keycap is-active rounded px-3.5 py-1.5 type-btn-label"
               >
-                TERAPKAN PID
+                Simpan
               </button>
             </div>
           </div>
         </section>
 
-        <!-- RIGHT ZONE (27%): Steering Control (Left / Right) -->
+        <!-- ZONA KANAN (27%): Belok Kiri / Kanan -->
         <section
           id="zone-steering"
-          class="surface-panel rounded-lg p-2.5 flex flex-col justify-between gap-2 min-h-0"
-          aria-label="Zona Kontrol Steering"
+          class="surface-panel rounded-lg p-2 flex flex-col justify-between gap-2 min-h-0"
+          aria-label="Kontrol Belok"
         >
           <div class="flex items-center justify-between px-1">
-            <span class="type-micro-label">STEERING // RIGHT THUMB</span>
-            <span
-              id="readout-steering"
-              class="tabular-nums text-xs font-bold text-[#16171A]"
-            >
+            <span class="type-micro-label">Belok</span>
+            <span id="readout-steering" class="tabular-nums text-xs font-bold text-[#16171A]">
               0%
             </span>
           </div>
 
           <div
             id="pad-steering-container"
-            class="pad-zone-standby flex-1 grid grid-cols-2 gap-2 min-h-0"
+            class="surface-recessed pad-zone-standby rounded-lg p-1.5 flex-1 grid grid-cols-2 gap-2 min-h-0"
           >
             <button
               id="btn-steering-left"
               type="button"
               aria-pressed="false"
-              class="tactile-keycap thumb-pad-btn h-full rounded-lg flex flex-col items-center justify-center gap-1.5"
+              class="tactile-keycap thumb-pad-btn h-full rounded-md flex flex-col items-center justify-center gap-1"
             >
               <span data-icon="icon-arrow-left" data-icon-size="24"></span>
-              <span class="type-btn-label">KIRI</span>
-              <span class="tabular-nums text-[11px] text-[#555760]">-100</span>
+              <span class="type-btn-label">Kiri</span>
             </button>
 
             <button
               id="btn-steering-right"
               type="button"
               aria-pressed="false"
-              class="tactile-keycap thumb-pad-btn h-full rounded-lg flex flex-col items-center justify-center gap-1.5"
+              class="tactile-keycap thumb-pad-btn h-full rounded-md flex flex-col items-center justify-center gap-1"
             >
               <span data-icon="icon-arrow-right" data-icon-size="24"></span>
-              <span class="type-btn-label">KANAN</span>
-              <span class="tabular-nums text-[11px] text-[#555760]">+100</span>
+              <span class="type-btn-label">Kanan</span>
             </button>
           </div>
         </section>

@@ -55,7 +55,7 @@
   - Sensor Garis: `S1..S5 = [GPIO 16, GPIO 17, GPIO 18, GPIO 19, GPIO 21]`.
   - Lampu LED: `FRONT = GPIO 22`, `REAR = GPIO 23`.
   - Battery ADC: `GPIO 34` (`ADC1_CH6`).
-  - Parameter Wi-Fi AP (`SSID: "Robot-LF-UMRI"`, `PASS: "robot1234"`, IP `192.168.4.1`) dan `WATCHDOG_TIMEOUT_MS = 400`.
+  - Parameter Wi-Fi AP (`SSID: "ESP32-Robot-LF"`, `PASS: "robot1234"`, IP `192.168.4.1`) dan `WATCHDOG_TIMEOUT_MS = 400`.
 - [ ] Buat `firmware/src/motor.rs`:
   - Konfigurasi LEDC Timer ($2\text{ kHz}$, resolusi 10-bit) dan 2 kanal PWM (`GPIO 32` & `GPIO 14`).
   - Implementasi fungsi `set_motors(left_pct: f32, right_pct: f32)` dengan logika arah L298N (`Forward`, `Reverse`, `Stop/Brake`).
@@ -102,8 +102,8 @@
   - Ukur tegangan keluaran terminal `5V` L298N dengan multimeter ($4.9\text{ V} - 5.1\text{ V}$) sebelum menyambungkannya ke Expansion Board.
 - [ ] **Flashing Firmware Aman:**
   - Matikan sakelar baterai dan **cabut kabel jumper `5V` dari L298N ke Expansion Board** sebelum mencolokkan kabel USB ke laptop.
-  - Jalankan `cargo espflash flash --release --monitor` dan pastikan log Wi-Fi AP `Robot-LF-UMRI` aktif.
+  - Jalankan `cargo espflash flash --release --monitor` dan pastikan log Wi-Fi AP `ESP32-Robot-LF` aktif.
 - [ ] **Pengujian Fungsional & Kalibrasi:**
-  - Hubungkan HP ke Wi-Fi `Robot-LF-UMRI`, buka `http://192.168.4.1` di browser *landscape*, dan tambahkan ke *Home Screen*.
+  - Hubungkan HP ke Wi-Fi `ESP32-Robot-LF`, buka `http://192.168.4.1` di browser *landscape*, dan tambahkan ke *Home Screen*.
   - Uji kontrol dua jempol di mode `MANUAL` serta uji *fail-safe* dengan mematikan Wi-Fi HP saat motor berputar (motor harus berhenti dalam $\le 400\text{ ms}$).
   - Kalibrasi potensiometer sensor TCRT5000 pada lintasan hitam-putih, lalu lakukan *tuning* nilai $K_p, K_i, K_d$ langsung dari menu dropdown dashboard hingga robot stabil melewati lintasan lurus maupun tikungan.
