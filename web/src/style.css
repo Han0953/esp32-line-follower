@@ -1,0 +1,419 @@
+@import "tailwindcss";
+
+@theme {
+  --color-white: #FAF9F5;
+  --color-black: #16171A;
+}
+
+:root {
+  --bg-chassis: #F3F2EE;
+  --surface-elevated: #FAF9F5;
+  --surface-recessed: #E5E3DC;
+  --surface-hover: #ECEAE2;
+  --ink-primary: #16171A;
+  --ink-secondary: #555760;
+  --border-hairline: #CECCC3;
+  --border-keycap: #C8C6BC;
+  --border-hover: #B5B3A8;
+  --bevel-highlight: rgba(255, 255, 255, 0.75);
+  --accent-danger: #D9381E;
+  --accent-danger-edge: #991B1B;
+  --accent-active: #1E40AF;
+  --accent-online: #15803D;
+  --accent-amber: #D97706;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: var(--bg-chassis);
+  color: var(--ink-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button,
+[role="button"],
+[role="option"],
+[role="slider"],
+label {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+button:focus-visible,
+input:focus-visible,
+[role="slider"]:focus-visible {
+  outline: 2px solid var(--accent-active);
+  outline-offset: 2px;
+}
+
+.tabular-nums {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.type-start-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.type-console-header {
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.type-telemetry-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+.type-btn-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.type-micro-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+
+/* Level 0: Recessed Track */
+.surface-recessed {
+  background-color: var(--surface-recessed);
+  border: 1px solid var(--border-keycap);
+  box-shadow: inset 0 2px 4px rgba(22, 23, 26, 0.08);
+}
+
+/* Level 1: Elevated Card / Panel */
+.surface-panel {
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--border-hairline);
+  box-shadow: inset 0 1px 0 var(--bevel-highlight), 0 1px 3px rgba(22, 23, 26, 0.05);
+}
+
+/* Level 1: Tactile Keycap / Button */
+.tactile-keycap {
+  background-color: var(--surface-elevated);
+  color: var(--ink-primary);
+  border: 1px solid var(--border-keycap);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 2px 0 var(--border-keycap),
+    0 3px 6px rgba(22, 23, 26, 0.07);
+  transition:
+    transform 60ms cubic-bezier(0.2, 0, 0, 1),
+    background-color 80ms ease,
+    box-shadow 60ms ease,
+    border-color 80ms ease,
+    color 80ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tactile-keycap:hover:not(:disabled):not(.is-pressed):not(.is-active) {
+    background-color: var(--surface-hover);
+    border-color: var(--border-hover);
+  }
+}
+
+.tactile-keycap:active:not(:disabled),
+.tactile-keycap.is-pressed {
+  transform: translateY(2px);
+  background-color: var(--surface-recessed);
+  box-shadow:
+    inset 0 2px 3px rgba(22, 23, 26, 0.14),
+    0 0 0 var(--border-keycap);
+}
+
+.tactile-keycap.is-active {
+  background-color: var(--accent-active);
+  color: var(--surface-elevated);
+  border-color: #17328F;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 2px 0 #142B7A;
+}
+
+.tactile-keycap.is-stop-mode {
+  background-color: var(--ink-primary);
+  color: var(--surface-elevated);
+  border-color: var(--ink-primary);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 2px 0 #2C2E33;
+}
+
+.tactile-keycap.is-led-on {
+  border-color: var(--accent-online);
+  background-color: #EBF5EE;
+  color: var(--ink-primary);
+}
+
+/* Dual-Thumb Pad Keycap */
+.thumb-pad-btn {
+  touch-action: none;
+  min-height: 44%;
+  position: relative;
+}
+
+.thumb-pad-btn.is-pressed {
+  transform: translateY(2px);
+  background-color: var(--surface-recessed);
+  border-color: var(--accent-active);
+  color: var(--accent-active);
+  box-shadow:
+    inset 0 2px 4px rgba(22, 23, 26, 0.16),
+    inset 0 0 0 1px var(--accent-active);
+}
+
+.pad-zone-standby {
+  opacity: 0.65;
+}
+
+/* Emergency STOP Button */
+.btn-emergency-stop {
+  min-width: 96px;
+  height: 36px;
+  background-color: var(--accent-danger);
+  color: var(--surface-elevated);
+  border: 1px solid var(--accent-danger-edge);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 2px 0 var(--accent-danger-edge),
+    0 3px 6px rgba(22, 23, 26, 0.14);
+  transition:
+    transform 60ms cubic-bezier(0.2, 0, 0, 1),
+    box-shadow 60ms ease,
+    background-color 80ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn-emergency-stop:hover {
+    background-color: #C43018;
+  }
+}
+
+.btn-emergency-stop:active,
+.btn-emergency-stop.is-pressed {
+  transform: translateY(2px);
+  box-shadow:
+    inset 0 2px 3px rgba(22, 23, 26, 0.28),
+    0 0 0 var(--accent-danger-edge);
+}
+
+/* Level 2: Floating Popover / PID Drawer */
+.surface-popover {
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--border-hover);
+  box-shadow:
+    0 10px 25px -5px rgba(22, 23, 26, 0.18),
+    0 4px 10px -2px rgba(22, 23, 26, 0.08);
+  transform-origin: bottom right;
+  transition:
+    opacity 150ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.surface-popover[hidden] {
+  display: none;
+}
+
+/* Custom Dropdown Option */
+.dropdown-option {
+  background-color: var(--surface-elevated);
+  color: var(--ink-primary);
+  transition: background-color 80ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dropdown-option:hover {
+    background-color: var(--surface-hover);
+  }
+}
+
+.dropdown-option.is-selected {
+  background-color: var(--surface-recessed);
+}
+
+/* Sensor Indicator Cell (60ms transition) */
+.sensor-cell {
+  background-color: var(--surface-recessed);
+  border: 1px solid var(--border-keycap);
+  color: var(--ink-secondary);
+  box-shadow: inset 0 2px 4px rgba(22, 23, 26, 0.08);
+  transition:
+    background-color 60ms ease,
+    border-color 60ms ease,
+    color 60ms ease;
+}
+
+.sensor-cell.is-detected {
+  background-color: var(--accent-danger);
+  border-color: var(--accent-danger-edge);
+  color: var(--surface-elevated);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Custom Tactile PWM Fader Slider */
+.pwm-slider-track {
+  position: relative;
+  height: 12px;
+  border-radius: 6px;
+  background-color: var(--surface-recessed);
+  border: 1px solid var(--border-keycap);
+  box-shadow: inset 0 2px 4px rgba(22, 23, 26, 0.08);
+  touch-action: none;
+}
+
+.pwm-slider-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background-color: var(--accent-active);
+  border-radius: 5px;
+  pointer-events: none;
+}
+
+.pwm-slider-thumb {
+  position: absolute;
+  top: 50%;
+  width: 22px;
+  height: 26px;
+  border-radius: 5px;
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--border-hover);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 2px 0 var(--border-hover),
+    0 3px 6px rgba(22, 23, 26, 0.14);
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  pointer-events: none;
+}
+
+.pwm-slider-grip {
+  width: 1px;
+  height: 12px;
+  background-color: #8E8C82;
+}
+
+/* View Transition & Spatial Grids */
+.view-screen {
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  transition:
+    opacity 180ms ease-out,
+    transform 180ms ease-out;
+}
+
+.view-screen.is-hidden {
+  display: none;
+  opacity: 0;
+  transform: scale(0.98);
+}
+
+.preflight-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 14px;
+  padding: 14px;
+  width: 100vw;
+  height: 100dvh;
+}
+
+.cockpit-shell {
+  display: grid;
+  grid-template-rows: 44px minmax(0, 1fr);
+  gap: 8px;
+  padding: 8px;
+  width: 100vw;
+  height: 100dvh;
+}
+
+.hud-bar-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 8px;
+}
+
+.cockpit-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 27fr) minmax(0, 46fr) minmax(0, 27fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 8px;
+  min-height: 0;
+  height: 100%;
+}
+
+.chevron-icon {
+  transition: transform 150ms ease;
+}
+
+.chevron-icon.is-open {
+  transform: rotate(180deg);
+}
+
+/* Portrait Orientation Guard */
+#portrait-guard {
+  display: none;
+}
+
+@media (orientation: portrait) {
+  #portrait-guard {
+    display: flex;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background-color: var(--bg-chassis);
+    color: var(--ink-primary);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

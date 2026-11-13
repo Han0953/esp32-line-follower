@@ -9,35 +9,35 @@
 ## Phase 1: Frontend Dashboard & Standalone Web App (`web/`)
 
 ### 1.1 Project Scaffolding & Build Pipeline
-- [ ] Inisialisasi direktori `web/` dengan Vite + Vanilla TypeScript (`strict: true`) dan Tailwind CSS.
-- [ ] Instal `vite-plugin-singlefile` dan konfigurasikan `web/vite.config.ts` agar seluruh JS dan CSS digabung ke dalam satu berkas `dist/index.html` tanpa folder `dist/assets/`.
-- [ ] Buat skrip `web/scripts/compress.mjs` menggunakan `node:zlib` (`gzipSync` level 9) untuk mengompres `dist/index.html` menjadi `dist/index.html.gz`.
-- [ ] Konfigurasikan `"build": "tsc && vite build && node scripts/compress.mjs"` di `web/package.json`.
+- [x] Inisialisasi direktori `web/` dengan Vite + Vanilla TypeScript (`strict: true`) dan Tailwind CSS.
+- [x] Instal `vite-plugin-singlefile` dan konfigurasikan `web/vite.config.ts` agar seluruh JS dan CSS digabung ke dalam satu berkas `dist/index.html` tanpa folder `dist/assets/`.
+- [x] Buat skrip `web/scripts/compress.mjs` menggunakan `node:zlib` (`gzipSync` level 9) untuk mengompres `dist/index.html` menjadi `dist/index.html.gz`.
+- [x] Konfigurasikan `"build": "tsc && vite build && node scripts/compress.mjs"` di `web/package.json`.
 
 ### 1.2 Standalone Web App & Design Tokens (`web/index.html` & `web/src/style.css`)
-- [ ] Tambahkan meta tags *mobile web app capable* dan *inline Data URI Web App Manifest* (`display: "fullscreen"`, `orientation: "landscape"`) beserta ikon SVG *inline* di dalam `<head>` pada `web/index.html`.
-- [ ] Terapkan variabel warna sesuai `DESIGN.md` di `web/src/style.css`:
+- [x] Tambahkan meta tags *mobile web app capable* dan *inline Data URI Web App Manifest* (`display: "fullscreen"`, `orientation: "landscape"`) beserta ikon SVG *inline* di dalam `<head>` pada `web/index.html`.
+- [x] Terapkan variabel warna sesuai `DESIGN.md` di `web/src/style.css`:
   - Background utama `#F3F2EE`, permukaan tombol `#FAF9F5`, area terbenam `#E5E3DC`, teks utama `#16171A` (**dilarang menggunakan `#FFFFFF` dan `#000000` murni**).
   - Warna aksen terbatas: `#D9381E` (STOP/bahaya/garis), `#1E40AF` (mode aktif/PWM), `#15803D` (connected/LED ON), `#D97706` (error/peringatan).
-- [ ] Implementasikan fisika permukaan taktil (elevasi *bevel* 3D, *border* $1\text{ px}$, efek tekan `:active` / `.is-pressed` turun $2\text{ px}$, dan state `:hover`).
-- [ ] Kunci orientasi layar penuh mendatar (`100vw` $\times$ `100dvh`, `overflow: hidden`) dan buat layar peringatan *Portrait Guard* otomatis saat perangkat berada dalam posisi vertikal.
+- [x] Implementasikan fisika permukaan taktil (elevasi *bevel* 3D, *border* $1\text{ px}$, efek tekan `:active` / `.is-pressed` turun $2\text{ px}$, dan state `:hover`).
+- [x] Kunci orientasi layar penuh mendatar (`100vw` $\times$ `100dvh`, `overflow: hidden`) dan buat layar peringatan *Portrait Guard* otomatis saat perangkat berada dalam posisi vertikal.
 
 ### 1.3 Icons, WebSocket Client & Multi-Touch Controls
-- [ ] Buat `web/src/icons.ts` berisi seluruh ikon geometris SVG *inline* (`icon-wifi`, `icon-battery`, `icon-stop`, `icon-auto`, `icon-manual`, `icon-arrow-up/down/left/right`, `icon-headlight`, `icon-taillight`, `icon-sliders`, `icon-chevron-down`, `icon-rotate-phone`). **Verifikasi nol karakter emoji di seluruh kode.**
-- [ ] Buat `web/src/types.ts` dengan kontrak tipe `RobotMode`, `ClientMessage`, dan `TelemetryMessage` yang identik dengan spesifikasi `PRD.md`.
-- [ ] Buat `web/src/ws.ts` (`RobotSocket`) yang terhubung ke `ws://${window.location.host}/ws` dengan:
+- [x] Buat `web/src/icons.ts` berisi seluruh ikon geometris SVG *inline* (`icon-wifi`, `icon-battery`, `icon-stop`, `icon-auto`, `icon-manual`, `icon-arrow-up/down/left/right`, `icon-headlight`, `icon-taillight`, `icon-sliders`, `icon-chevron-down`, `icon-rotate-phone`). **Verifikasi nol karakter emoji di seluruh kode.**
+- [x] Buat `web/src/types.ts` dengan kontrak tipe `RobotMode`, `ClientMessage`, dan `TelemetryMessage` yang identik dengan spesifikasi `PRD.md`.
+- [x] Buat `web/src/ws.ts` (`RobotSocket`) yang terhubung ke `ws://${window.location.host}/ws` dengan:
   - *Auto-reconnect* otomatis tiap $1000\text{ ms}$ saat koneksi terputus.
   - *Heartbeat interval* setiap $100\text{ ms}$ selama nilai `throttle !== 0 || steering !== 0` agar tidak memicu *watchdog timeout* $400\text{ ms}$ di firmware.
-- [ ] Buat `web/src/controls.ts` (`DualThumbController`) menggunakan `PointerEvents` (`pointerdown`, `pointermove`, `pointerup`, `pointercancel`, `lostpointercapture`) dengan `setPointerCapture` dan pelacakan `pointerId` independen untuk Zona Kiri (*Throttle*) dan Zona Kanan (*Steering*).
+- [x] Buat `web/src/controls.ts` (`DualThumbController`) menggunakan `PointerEvents` (`pointerdown`, `pointermove`, `pointerup`, `pointercancel`, `lostpointercapture`) dengan `setPointerCapture` dan pelacakan `pointerId` independen untuk Zona Kiri (*Throttle*) dan Zona Kanan (*Steering*).
 
 ### 1.4 Views & Interactive Components (`web/src/main.ts`)
-- [ ] Bangun **View 1 (Halaman Mulai / Pre-Flight Gate)** dalam tata letak *landscape* 2 kolom yang menampilkan status kesiapan WebSocket, status boot `STOP`, tegangan baterai, serta tombol masuk ke dashboard.
-- [ ] Bangun **View 2 (Dashboard Kontrol Utama)** menggunakan CSS Grid anti-tumpuk:
+- [x] Bangun **View 1 (Halaman Mulai / Pre-Flight Gate)** dalam tata letak *landscape* 2 kolom yang menampilkan status kesiapan WebSocket, status boot `STOP`, tegangan baterai, serta tombol masuk ke dashboard.
+- [x] Bangun **View 2 (Dashboard Kontrol Utama)** menggunakan CSS Grid anti-tumpuk:
   - *Top HUD Bar:* Indikator koneksi + tegangan baterai, pemilih mode (`STOP`, `AUTO`, `MANUAL`), dan tombol darurat **`STOP`**.
   - *Zona Kiri:* Tombol kontrol taktil Maju (`+100`) dan Mundur (`-100`).
   - *Zona Tengah:* Visualizer 5 sensor garis (`S1..S5`), pembacaan `line_error` & PWM motor kiri/kanan, *custom tactile slider* batas PWM ($0\% - 100\%$), sakelar Lampu Depan & Belakang, serta **Custom Dropdown / Popover PID Tuning** (dengan preset dan input manual $K_p, K_i, K_d$).
   - *Zona Kanan:* Tombol kontrol taktil Belok Kiri (`-100`) dan Belok Kanan (`+100`).
-- [ ] Jalankan `npm run build` di `web/` dan pastikan `web/dist/index.html.gz` terbentuk dengan ukuran $< 50\text{ KB}$.
+- [x] Jalankan `npm run build` di `web/` dan pastikan `web/dist/index.html.gz` terbentuk dengan ukuran $< 50\text{ KB}$.
 
 ---
 
