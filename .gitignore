@@ -1,0 +1,14 @@
+# Firmware (Rust / ESP-IDF)
+firmware/.embuild/
+firmware/target/
+firmware/.vscode/
+firmware/Cargo.lock
+
+# Frontend (Node / Vite)
+web/node_modules/
+web/dist/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+
