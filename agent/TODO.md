@@ -44,26 +44,26 @@
 ## Phase 2: Firmware Core & Hardware Drivers (`firmware/`)
 
 ### 2.1 Cargo & ESP-IDF Configuration
-- [ ] Buat `firmware/Cargo.toml` dengan dependensi `esp-idf-svc`, `esp-idf-hal`, `esp-idf-sys`, `serde`, `serde_json`, `anyhow`, dan `log`.
-- [ ] Buat `firmware/sdkconfig.defaults` dan aktifkan `CONFIG_ESP_WIFI_SOFTAP_SUPPORT=y`, `CONFIG_HTTPD_WS_SUPPORT=y`, `CONFIG_HTTPD_MAX_REQ_HDR_LEN=1024`, `CONFIG_HTTPD_MAX_URI_LEN=512`.
-- [ ] Pastikan `firmware/build.rs` memanggil `embuild::espidf::sysenv::output()`.
+- [x] Buat `firmware/Cargo.toml` dengan dependensi `esp-idf-svc`, `esp-idf-hal`, `esp-idf-sys`, `serde`, `serde_json`, `anyhow`, dan `log`.
+- [x] Buat `firmware/sdkconfig.defaults` dan aktifkan `CONFIG_ESP_WIFI_SOFTAP_SUPPORT=y`, `CONFIG_HTTPD_WS_SUPPORT=y`, `CONFIG_HTTPD_MAX_REQ_HDR_LEN=1024`, `CONFIG_HTTPD_MAX_URI_LEN=512`.
+- [x] Pastikan `firmware/build.rs` memanggil `embuild::espidf::sysenv::output()`.
 
 ### 2.2 Hardware Abstraction Modules
-- [ ] Buat `firmware/src/config.rs` berisi konstanta pinout GPIO sesuai `HARDWARE_WIRING.md`:
+- [x] Buat `firmware/src/config.rs` berisi konstanta pinout GPIO sesuai `HARDWARE_WIRING.md`:
   - Motor Kiri: `ENA = GPIO 32`, `IN1 = GPIO 33`, `IN2 = GPIO 25`.
   - Motor Kanan: `IN3 = GPIO 26`, `IN4 = GPIO 27`, `ENB = GPIO 14`.
   - Sensor Garis: `S1..S5 = [GPIO 16, GPIO 17, GPIO 18, GPIO 19, GPIO 21]`.
   - Lampu LED: `FRONT = GPIO 22`, `REAR = GPIO 23`.
   - Battery ADC: `GPIO 34` (`ADC1_CH6`).
   - Parameter Wi-Fi AP (`SSID: "ESP32-Robot-LF"`, `PASS: "robot1234"`, IP `192.168.4.1`) dan `WATCHDOG_TIMEOUT_MS = 400`.
-- [ ] Buat `firmware/src/motor.rs`:
+- [x] Buat `firmware/src/motor.rs`:
   - Konfigurasi LEDC Timer ($2\text{ kHz}$, resolusi 10-bit) dan 2 kanal PWM (`GPIO 32` & `GPIO 14`).
   - Implementasi fungsi `set_motors(left_pct: f32, right_pct: f32)` dengan logika arah L298N (`Forward`, `Reverse`, `Stop/Brake`).
   - Implementasi fungsi *differential mixer* `mix_manual(throttle, steering, pwm_limit)`.
-- [ ] Buat `firmware/src/sensor.rs`:
+- [x] Buat `firmware/src/sensor.rs`:
   - Inisialisasi 5 pin GPIO input sensor TCRT5000 (mendukung konfigurasi `LINE_ACTIVE_HIGH`).
   - Implementasi kalkulasi error berbobot $w = [-2.0, -1.0, 0.0, +1.0, +2.0]$ serta logika pencarian garis konservatif saat semua sensor membaca lantai putih (maks $800\text{ ms}$).
-- [ ] Buat `firmware/src/pid.rs`:
+- [x] Buat `firmware/src/pid.rs`:
   - Implementasi struct `PidController` diskrit ($\Delta t = 0.01\text{ s}$) lengkap dengan pembatas *integral anti-windup* dan metode `reset()`.
 
 ---
@@ -71,14 +71,14 @@
 ## Phase 3: State Machine, Safety & Network Server (`firmware/`)
 
 ### 3.1 State Machine & Watchdog (`firmware/src/state.rs`)
-- [ ] Buat struct `RobotState` yang dibungkus `Arc<Mutex<RobotState>>` dengan kondisi awal saat *boot* terkunci di `RobotMode::Stop` dan `pwm_limit = 50`.
-- [ ] Terapkan aturan transisi aman pada `set_mode()`: setiap perpindahan mode (`AUTO` $\leftrightarrow$ `MANUAL`) wajib melewati `STOP`, mereset integral PID, dan mengosongkan nilai `throttle` & `steering`.
-- [ ] Implementasikan pengecekan *watchdog timeout*: pada mode `MANUAL`, jika selisih waktu sejak paket `move` terakhir melebihi $400\text{ ms}$, paksa output motor menjadi $0$.
+- [x] Buat struct `RobotState` yang dibungkus `Arc<Mutex<RobotState>>` dengan kondisi awal saat *boot* terkunci di `RobotMode::Stop` dan `pwm_limit = 50`.
+- [x] Terapkan aturan transisi aman pada `set_mode()`: setiap perpindahan mode (`AUTO` $\leftrightarrow$ `MANUAL`) wajib melewati `STOP`, mereset integral PID, dan mengosongkan nilai `throttle` & `steering`.
+- [x] Implementasikan pengecekan *watchdog timeout*: pada mode `MANUAL`, jika selisih waktu sejak paket `move` terakhir melebihi $400\text{ ms}$, paksa output motor menjadi $0$.
 
 ### 3.2 Wi-Fi SoftAP, HTTP & WebSocket Server (`firmware/src/server.rs`)
-- [ ] Konfigurasikan `EspWifi` dalam mode Access Point (`192.168.4.1`, Channel 1).
-- [ ] Tanamkan aset frontend menggunakan `static INDEX_HTML_GZ: &[u8] = include_bytes!("../../web/dist/index.html.gz");` dan layani pada rute `GET /` dengan header `Content-Encoding: gzip`.
-- [ ] Implementasikan endpoint WebSocket `/ws`:
+- [x] Konfigurasikan `EspWifi` dalam mode Access Point (`192.168.4.1`, Channel 1).
+- [x] Tanamkan aset frontend menggunakan `static INDEX_HTML_GZ: &[u8] = include_bytes!("../../web/dist/index.html.gz");` dan layani pada rute `GET /` dengan header `Content-Encoding: gzip`.
+- [x] Implementasikan endpoint WebSocket `/ws`:
   - Parsing pesan masuk `ClientMessage` menggunakan `serde_json::from_str` secara aman (abaikan dan log peringatan jika JSON tidak valid tanpa memicu `panic!`).
   - Simpan koneksi aktif menggunakan `EspHttpWsDetachedSender` di dalam registry thread-safe untuk siaran telemetri.
 
@@ -86,10 +86,10 @@
 
 ## Phase 4: Main Loop Integration & Build Verification (`firmware/src/main.rs`)
 
-- [ ] Satukan inisialisasi seluruh periferal GPIO, LEDC PWM, ADC1, Wi-Fi SoftAP, dan `EspHttpServer` di `firmware/src/main.rs`.
-- [ ] Jalankan *background thread* untuk *broadcast* `TelemetryMessage` setiap $200\text{ ms}$ ($5\text{ Hz}$) ke seluruh klien WebSocket yang terhubung.
-- [ ] Jalankan loop kendali utama pada frekuensi $100\text{ Hz}$ ($\Delta t = 10\text{ ms}$) yang mengeksekusi pembacaan sensor, pengecekan *watchdog*, perhitungan PID/Mixer, pembaruan output motor & LED, serta pembaruan snapshot telemetri.
-- [ ] Jalankan `cargo build --release` di dalam `firmware/` dan pastikan kompilasi berhasil bersih tanpa error.
+- [x] Satukan inisialisasi seluruh periferal GPIO, LEDC PWM, ADC1, Wi-Fi SoftAP, dan `EspHttpServer` di `firmware/src/main.rs`.
+- [x] Jalankan *background thread* untuk *broadcast* `TelemetryMessage` setiap $200\text{ ms}$ ($5\text{ Hz}$) ke seluruh klien WebSocket yang terhubung.
+- [x] Jalankan loop kendali utama pada frekuensi $100\text{ Hz}$ ($\Delta t = 10\text{ ms}$) yang mengeksekusi pembacaan sensor, pengecekan *watchdog*, perhitungan PID/Mixer, pembaruan output motor & LED, serta pembaruan snapshot telemetri.
+- [x] Jalankan `cargo build --release` di dalam `firmware/` dan pastikan kompilasi berhasil bersih tanpa error.
 
 ---
 

@@ -277,6 +277,18 @@ Karena `EspHttpServer` menangani koneksi WebSocket berbasis *event callback* (`w
 1. Saat klien berhasil melakukan *handshake* WebSocket (`ws.is_new()`), *handler* membuat detached sender (`ws.create_detached_sender()`) dan menyimpannya ke dalam `Arc<Mutex<Vec<EspHttpWsDetachedSender>>>`.
 2. Saat klien terputus (`ws.is_closed()`) atau pengiriman telemetri mengembalikan `Err(_)`, sesi tersebut segera dihapus dari daftar (*pruning*) agar tidak terjadi kebocoran memori (*memory leak*).
 
+### 5.3 Serial Monitor Diagnostics (`115200 bps`)
+
+Untuk mempermudah *debugging* tanpa membebani loop kontrol $100\text{ Hz}$, firmware menggunakan `EspLogger` dengan log berbasis *edge-triggered* (hanya dicetak saat terjadi perubahan status/event):
+
+- **`[BOOT]`**: Status inisialisasi firmware serta pemetaan aktif pin GPIO Motor, Sensor IR, LED, dan Battery ADC.
+- **`[NET]` & `[WIFI]`**: IP gateway SoftAP (`192.168.4.1`), subnet, kanal Wi-Fi, MAC ESP32, serta event koneksi/diskoneksi perangkat station (`MAC`, `AID`, `IP DHCP`, dan total perangkat terhubung). Bila semua perangkat Wi-Fi terputus, sistem memicu `force_stop`.
+- **`[WS]`**: Penambahan dan pembersihan ID sesi WebSocket aktif serta peringatan JSON tidak valid.
+- **`[GERAK]`**: Status arah robot (`BERHENTI`, `MAJU`, `MUNDUR`, `BELOK KIRI/KANAN`, `MAJU/MUNDUR + BELOK`) beserta persentase PWM motor kiri/kanan.
+- **`[MODE]`, `[LED]`, `[CFG]`, `[PID]`, `[SAFE]`, `[SENSOR]`**: Perubahan mode (`STOP`/`MANUAL`/`AUTO`/`LINE_LOST`), status Lampu Depan & Belakang (`HIDUP`/`MATI`), perubahan batas PWM, pembaruan $K_p/K_i/K_d$, *watchdog timeout* $400\text{ ms}$, dan garis hilang $> 800\text{ ms}$.
+
+> **Catatan Build Windows (`firmware/.cargo/config.toml`):** Karena keterbatasan panjang path `OUT_DIR` ($\le 88$ karakter) pada `esp-idf-sys` Windows serta keterbatasan ruang partisi `D:`, `.cargo/config.toml` mengarahkan `target-dir = "C:\\ef-t"` dan `ESP_IDF_TOOLS_INSTALL_DIR = "custom:C:\\espidf"`.
+
 ---
 
 ## 6. Memory, Flash & Latency Budget
