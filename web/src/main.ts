@@ -67,6 +67,7 @@ const pfBattDot = getElement<HTMLElement>("pf-batt-dot");
 const pfBatteryVal = getElement<HTMLElement>("pf-battery-val");
 const pfSelectedSummary = getElement<HTMLElement>("pf-selected-summary");
 const btnLaunchCockpit = getElement<HTMLButtonElement>("btn-launch-cockpit");
+const btnFullscreenPf = getElement<HTMLButtonElement>("btn-fullscreen-pf");
 const btnOpenGuide = getElement<HTMLButtonElement>("btn-open-guide");
 const btnCloseGuide = getElement<HTMLButtonElement>("btn-close-guide");
 const guideModal = getElement<HTMLElement>("guide-modal");
@@ -660,6 +661,7 @@ function bindPidPopoverEvents(): void {
 }
 
 function bindFullscreenEvents(): void {
+  const buttons = [btnFullscreenPf, btnFullscreenHud];
   const root = document.documentElement as HTMLElement & {
     webkitRequestFullscreen?: () => Promise<void> | void;
   };
@@ -677,7 +679,9 @@ function bindFullscreenEvents(): void {
   );
 
   if (!supported) {
-    btnFullscreenHud.hidden = true;
+    buttons.forEach((btn) => {
+      btn.hidden = true;
+    });
     return;
   }
 
@@ -686,13 +690,15 @@ function bindFullscreenEvents(): void {
       document.fullscreenElement || doc.webkitFullscreenElement
     );
     const iconName = isFs ? "icon-minimize" : "icon-maximize";
-    btnFullscreenHud.setAttribute("aria-pressed", String(isFs));
-    btnFullscreenHud.classList.toggle("is-active", isFs);
-    const slot = btnFullscreenHud.querySelector<HTMLElement>("[data-icon]");
-    if (slot) {
-      const size = Number(slot.dataset.iconSize ?? "14");
-      slot.innerHTML = renderIcon(iconName, size);
-    }
+    buttons.forEach((btn) => {
+      btn.setAttribute("aria-pressed", String(isFs));
+      btn.classList.toggle("is-active", isFs);
+      const slot = btn.querySelector<HTMLElement>("[data-icon]");
+      if (slot) {
+        const size = Number(slot.dataset.iconSize ?? "14");
+        slot.innerHTML = renderIcon(iconName, size);
+      }
+    });
   };
 
   const toggleFullscreen = async (): Promise<void> => {
@@ -723,8 +729,10 @@ function bindFullscreenEvents(): void {
     syncFullscreenUi();
   };
 
-  btnFullscreenHud.addEventListener("click", () => {
-    void toggleFullscreen();
+  buttons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      void toggleFullscreen();
+    });
   });
 
   document.addEventListener("fullscreenchange", syncFullscreenUi);
